@@ -1,22 +1,26 @@
-# Django Task Project: Сотрудники и галерея
+# Django Task Project
 
-Учебный проект на Django: список сотрудников, карточка с фото (с ранжированием), поиск, пагинация, экспорт в CSV, кэширование.
+Учебный проект на Django: управление сотрудниками, галерея фото, валидация рабочих мест.
 
-## Структура
+## 🚀 Быстрый старт
 
-- `core/` — настройки проекта, главный `urls.py`
-- `emp_app/` — приложение сотрудников (модели, views, urls, admin)
-- `templates/` — шаблоны (наследование от `base.html`)
-- `static/` — CSS и прочие статические файлы
-- `media/` — загруженные изображения (создаётся автоматически)
-- `scripts/` — скрипты инициализации (seed, настройки)
+```bash
+# Клонирование
+git clone <ссылка-на-репозиторий>
+cd django-task-project2
 
-## Быстрый старт
+# Создание виртуального окружения (Windows + MINGW64)
+python -m venv venv
+source venv/Scripts/activate
 
-1. **Клонирование и окружение**
-   ```bash
-   git clone <ссылка-на-репозиторий>
-   cd django-task-project
-   python -m venv venv
-   source venv/Scripts/activate   # Windows: venv\\Scripts\\activate
-   pip install -r requirements.txt
+# Установка зависимостей
+pip install -r requirements.txt
+
+# Применение миграций
+python manage.py migrate
+
+# Запуск сервера
+python manage.py runserver
+
+# Запуск тестов
+python manage.py test emp_app
