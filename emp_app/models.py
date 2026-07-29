@@ -56,10 +56,10 @@ class EmployeeProfile(models.Model):
 class EmployeeImage(models.Model):
     employee = models.ForeignKey(EmployeeProfile, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='employee_photos/', null=True, blank=True)
-    order_index = models.PositiveIntegerField(default=0, help_text="Порядок фото в галерее")
+    order = models.PositiveIntegerField(default=1, verbose_name='Порядок фото')
 
     def __str__(self):
         return f"Фото {self.employee.full_name} (порядок {self.order_index})"
 
     class Meta:
-        ordering = ['order_index']
+        ordering = ['order']

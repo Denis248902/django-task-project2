@@ -7,4 +7,4 @@ class EmployeeProfileAdmin(admin.ModelAdmin):
 
 @admin.register(EmployeeImage)
 class EmployeeImageAdmin(admin.ModelAdmin):
-    list_display = ('employee', 'order_index')
+    list_display = ('id', 'employee', 'order')
