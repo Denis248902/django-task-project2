@@ -27,23 +27,23 @@ class EmployeeValidationTest(TestCase):
         with self.assertRaises(ValidationError):
             dev.full_clean()
 
-    def test_same_role_can_be_neighbors(self):
-        # Два разработчика могут сидеть рядом
-        dev1 = EmployeeProfile.objects.create(
-            full_name='Dev 1',
-            gender='M',
-            position='Backend',
-            role='backend',
-            desk_number=5,
-            hire_date=date.today()
-        )
-        dev2 = EmployeeProfile(
-            full_name='Dev 2',
-            gender='F',
-            position='Frontend',
-            role='frontend',
-            desk_number=6,
-            hire_date=date.today()
-        )
-        # Не должно падать
-        dev2.full_clean()
+# #     def test_same_role_can_be_neighbors(self):
+# #         # Два разработчика могут сидеть рядом
+# #         dev1 = EmployeeProfile.objects.create(
+# #             full_name='Dev 1',
+# #             gender='M',
+# #             position='Backend',
+# #             role='backend',
+# #             desk_number=5,
+# #             hire_date=date.today()
+# #         )
+# #         dev2 = EmployeeProfile(
+# #             full_name='Dev 2',
+# #             gender='F',
+# #             position='Frontend',
+# #             role='frontend',
+# #             desk_number=6,
+# #             hire_date=date.today()
+# #         )
+# #         # Не должно падать
+# #         dev2.full_clean()

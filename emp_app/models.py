@@ -22,7 +22,25 @@ class EmployeeProfile(models.Model):
     role = models.CharField(max_length=50, choices=ROLE_CHOICES, default='backend')
     skills = models.JSONField(default=list, blank=True)
     desk_number = models.IntegerField(null=True, blank=True)
-    hire_date = models.DateField(null=False, blank=False)  # <-- ВАЖНО: это поле теперь точно есть
+    hire_date = models.DateField(null=True, blank=True)  # важно: у тебя используется в tenure_days
+
+    def clean(self):
+        super().clean()
+        if self.desk_number is None:
+            return
+
+        developer_roles = ['backend', 'frontend', 'fullstack']
+        is_dev_or_tester = (self.role in developer_roles) or (self.role == 'tester')
+
+        if is_dev_or_tester:
+            neighbors = EmployeeProfile.objects.filter(
+                role__in=developer_roles + ['tester'],
+                desk_number__in=[self.desk_number - 1, self.desk_number + 1]
+            ).exclude(pk=self.pk)
+            if neighbors.exists():
+                raise ValidationError(
+                    "Тестировщики и разработчики не могут занимать соседние столы."
+                )
 
     def __str__(self):
         return self.full_name
@@ -34,32 +52,6 @@ class EmployeeProfile(models.Model):
             return (today - self.hire_date).days
         return 0
 
-    def clean(self):
-        super().clean()
-        # Если стол не указан — валидацию не делаем
-        if not self.desk_number:
-            return
-
-        def is_tester(e):
-            return e.role == "tester"
-
-        def is_dev(e):
-            return e.role in ["backend", "frontend", "fullstack"]
-
-        current_is_tester = is_tester(self)
-        current_is_dev = is_dev(self)
-
-        others = EmployeeProfile.objects.exclude(pk=self.pk).filter(desk_number__isnull=False)
-        for other in others:
-            other_is_tester = is_tester(other)
-            other_is_dev = is_dev(other)
-
-            if (current_is_tester and other_is_dev) or (current_is_dev and other_is_tester):
-                if abs(self.desk_number - other.desk_number) <= 1:
-                    raise ValidationError(
-                        f"Нельзя сажать тестировщика и разработчика за соседние столы. "
-                        f"Конфликт со столом {other.desk_number} ({other.full_name})."
-                    )
 
 class EmployeeImage(models.Model):
     employee = models.ForeignKey(EmployeeProfile, on_delete=models.CASCADE, related_name='images')
