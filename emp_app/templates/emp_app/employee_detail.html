@@ -32,11 +32,11 @@
   {% for img in images %}
     <div>
       {% if img.image %}
-        <img src="{{ img.image.url }}" alt="Фото {{ img.order_index }}" class="employee-photo">
+        <img src="{{ img.image.url }}" alt="Фото {{ img.order }}" class="employee-photo">
       {% else %}
         <span>Нет файла</span>
       {% endif %}
-      <p>Порядок: {{ img.order_index }}</p>
+      <p>Порядок: {{ img.order }}</p>
     </div>
   {% empty %}
   <p>Фотографий пока нет.</p>

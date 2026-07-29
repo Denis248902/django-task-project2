@@ -43,7 +43,7 @@ def employee_list(request):
 
 def employee_detail(request, pk):
     employee = get_object_or_404(EmployeeProfile, pk=pk)
-    images = employee.images.order_by('order_index')
+    images = employee.images.order_by('order')
     return render(request, 'emp_app/employee_detail.html', {
         'employee': employee,
         'images': images,
@@ -70,16 +70,16 @@ def employee_upload_photo(request, pk):
         messages.error(request, f"Ошибка: файл слишком большой. Максимум 5 МБ.")
         return redirect('employee_detail', pk=pk)
 
-    order_index = request.POST.get('order_index', 0)
+    order = request.POST.get('order', 0)
     try:
-        order_index = int(order_index) if str(order_index).isdigit() else 0
+        order = int(order) if str(order).isdigit() else 0
     except ValueError:
-        order_index = 0
+        order = 0
 
     EmployeeImage.objects.create(
         employee=employee,
         image=image_file,
-        order_index=order_index
+        order=order
     )
     messages.success(request, "Фото успешно загружено!")
     return redirect('employee_detail', pk=pk)
@@ -92,7 +92,7 @@ def export_employees_csv(request):
     writer.writerow(['ID', 'Full Name', 'Gender', 'Position', 'Photo URLs (comma-separated)'])
 
     for emp in EmployeeProfile.objects.all():
-        photos = ", ".join([img.image.url for img in emp.images.order_by('order_index')])
+        photos = ", ".join([img.image.url for img in emp.images.order_by('order')])
         gender_text = 'Мужской' if emp.gender == 'M' else 'Женский'
         writer.writerow([emp.id, emp.full_name, gender_text, emp.position, photos])
 

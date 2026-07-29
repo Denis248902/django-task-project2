@@ -69,7 +69,7 @@ for emp in created_employees:
     EmployeeImage.objects.create(
         employee=emp,
         image=f"{emp.id}_test.jpg",
-        order_index=1
+        order=1
     )
     print(f"  + фото для: {emp.full_name}")
 

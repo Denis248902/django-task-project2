@@ -59,7 +59,7 @@ class EmployeeImage(models.Model):
     order = models.PositiveIntegerField(default=1, verbose_name='Порядок фото')
 
     def __str__(self):
-        return f"Фото {self.employee.full_name} (порядок {self.order_index})"
+        return f"Фото {self.employee.full_name} (порядок {self.order})"
 
     class Meta:
         ordering = ['order']

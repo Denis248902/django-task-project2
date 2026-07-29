@@ -60,7 +60,7 @@ for data in employees_data:
     EmployeeImage.objects.create(
         employee=emp,
         image=f"{emp.id}_test.jpg",
-        order_index=1
+        order=1
     )
 
 print(f"✅ Создано {len(created_employees)} сотрудников, навыки и фото‑заглушки.")
