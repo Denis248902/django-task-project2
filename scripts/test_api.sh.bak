@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+BASE=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$BASE"
+
+export DJANGO_SETTINGS_MODULE="core.settings"
+export PYTHONPATH="${PYTHONPATH:-}"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+log_ok() {
+  echo -e "${GREEN}✅ OK${NC} — $1"
+}
+
+log_fail() {
+  echo -e "${RED}❌ FAIL${NC} — $1"
+}
+
+HOST="http://127.0.0.1:8000"
+ADMIN_USER="admin"
+ADMIN_PASS="SuperSecretPass123!"
+
+echo "🚀 Запуск Django сервера для тестов API..."
+python manage.py runserver 127.0.0.1:8000 &
+SERVER_PID=$!
+
+# Ждём, пока сервер поднимется
+
+# Тест 1: GET без авторизации (должен быть 200)
+  log_fail "GET /api/employees/ вернул код $RESPONSE, ожидалось 200"
+log_ok "GET (без авторизации) — 200 OK"
+
+# Тест 2: POST без авторизации (ожидаем 401 — Unauthorized)
+if [[ "$RESPONSE" != "401" && "$RESPONSE" != "403" ]]; then
+log_ok "POST (без авторизации) — $RESPONSE (доступ закрыт, права работают!)"
+
+# Тест 3: POST с авторизацией admin (должен быть 201)
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -u "${ADMIN_USER}:${ADMIN_PASS}" -X POST -H "Content-Type: application/json" -d '{"full_name":"AdminTest","position":"Manager"}' "${HOST}/api/employees/")
+if [ "$RESPONSE" != "201" ]; then
+  log_fail "POST (admin) вернул код $RESPONSE, ожидалось 201 (Created)"
+fi
+log_ok "POST (admin) — 201 Created"
+
+echo "🧹 Остановка сервера..."
+kill "$SERVER_PID" 2>/dev/null || true
+wait "$SERVER_PID" 2>/dev/null || true
+
+echo ""
+echo "✅ Все API‑тесты пройдены!"

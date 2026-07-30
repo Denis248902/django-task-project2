@@ -1,7 +1,5 @@
-from rest_framework import filters, status
-from rest_framework.decorators import action
+from rest_framework import action, filters, status, viewsets
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 
 from emp_app.models import EmployeeProfile
 
@@ -24,7 +22,7 @@ class IsWatcherOrAdmin(object):
         return request.user.is_staff or request.user.is_superuser
 
 
-class EmployeeViewSet(ModelViewSet):
+class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = EmployeeProfile.objects.all()
     serializer_class = EmployeeProfileSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
@@ -53,10 +51,8 @@ class EmployeeViewSet(ModelViewSet):
             return Response(
                 {"error": "desk_number required"}, status=status.HTTP_400_BAD_REQUEST
             )
-
         employee.desk_number = desk
         employee.save()
-
         return Response(
             {
                 "id": employee.id,

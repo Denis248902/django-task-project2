@@ -1,10 +1,10 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .api_views import EmployeeProfileViewSet  # <-- обращаемся к api_views.py
+from .views import EmployeeViewSet
 
 router = DefaultRouter()
-router.register(r"", EmployeeProfileViewSet, basename="employee")
+router.register(r"employees", EmployeeViewSet, basename="employee")
 
 urlpatterns = [
     path("", include(router.urls)),

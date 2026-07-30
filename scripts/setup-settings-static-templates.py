@@ -14,12 +14,12 @@ if "STATIC_URL" not in content:
         new_lines.append(line)
         if line.strip().startswith("BASE_DIR"):
             new_lines.append('STATIC_URL = "/static/"')
-            new_lines.append("STATICFILES_DIRS = [BASE_DIR / \"static\"]")
+            new_lines.append('STATICFILES_DIRS = [BASE_DIR / "static"]')
             inserted = True
     if not inserted:
         # Если BASE_DIR не найден, добавляем в конец
         new_lines.append('STATIC_URL = "/static/"')
-        new_lines.append("STATICFILES_DIRS = [BASE_DIR / \"static\"]")
+        new_lines.append('STATICFILES_DIRS = [BASE_DIR / "static"]')
     content = "\n".join(new_lines)
 
 # Исправляем DIRS в TEMPLATES: заменяем [] на [BASE_DIR / "templates"]

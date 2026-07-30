@@ -1,10 +1,13 @@
 from django.contrib import admin
-from .models import EmployeeProfile, EmployeeImage
+
+from .models import EmployeeProfile, Photo
+
 
 @admin.register(EmployeeProfile)
 class EmployeeProfileAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'role', 'desk_number', 'gender')
+    list_display = ["full_name", "position"]
 
-@admin.register(EmployeeImage)
-class EmployeeImageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'employee', 'order')
+
+@admin.register(Photo)
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ["employee", "order"]

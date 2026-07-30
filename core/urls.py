@@ -1,32 +1,22 @@
-from django.contrib import admin
-from django.urls import path, include
-from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from django.urls import include, path
 
 urlpatterns = [
-path('employees/', include('emp_app.urls')),
-    path('admin/', admin.site.urls),
-    path('api/', include('emp_app.urls')),
-    path('', include('emp_app.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path("admin/", admin.site.urls),
+    path(
+        "login/",
+        auth_views.LoginView.as_view(template_name="registration/login.html"),
+        name="login",
+    ),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    # API: только сюда подключаем emp_app для REST
+    path("api/employees/", include("emp_app.urls")),
+    # Обычные страницы (если нужны) — подключай отдельно, если есть отдельный urls для них
+    # path('employees/', include('emp_app.browser_urls')),  # <-- пока не добавляй, если нет такого файла
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    path('employees/', include('emp_app.urls')),
-from django.conf import settings
-from django.conf.urls.static import static
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-from django.conf import settings
-from django.conf.urls.static import static
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-from django.conf import settings
-from django.conf.urls.static import static
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-path('api/', include('api.urls')),

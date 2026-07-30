@@ -1,0 +1,15 @@
+[flake8]
+max-line-length = 110
+exclude = .git,__pycache__,venv,.venv,migrations,tests,test_suite
+per-file-ignores =
+    core/settings.py:E402
+    scripts/*.py:E402
+    seed_data.py:E402
+    check_skills.py:E402
+    emp_app/forms.py:F401
+    emp_app/views.py:F401
+    forms.py:F401
+    views.py:F401
+    wp_app/models.py:F401
+    patch-settings.py:F401
+    scripts/setup-settings-static-templates.py:F401

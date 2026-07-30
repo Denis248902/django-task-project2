@@ -5,7 +5,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # Наши приложения (только Config-версии, без дублей)
     "employees.apps.EmployeesConfig",
     "workplaces.apps.WorkplacesConfig",

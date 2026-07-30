@@ -1,16 +1,19 @@
-from rest_framework import filters, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
+#!/usr/bin/env bash
+set -euo pipefail
+
+BASE=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$BASE"
+
+CODE='from rest_framework import filters, status
 from rest_framework.viewsets import ModelViewSet
-
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from emp_app.models import EmployeeProfile
-
 from .serializers import EmployeeProfileSerializer
 
 
 class IsAdminOrReadOnly(object):
     """Admin — полный доступ; остальные — только чтение."""
-
     def has_permission(self, request, view):
         if request.method in ["GET", "HEAD", "OPTIONS"]:
             return True
@@ -19,7 +22,6 @@ class IsAdminOrReadOnly(object):
 
 class IsWatcherOrAdmin(object):
     """Watcher (staff) и Admin могут перемещать сотрудников."""
-
     def has_permission(self, request, view):
         return request.user.is_staff or request.user.is_superuser
 
@@ -50,17 +52,17 @@ class EmployeeViewSet(ModelViewSet):
         employee = self.get_object()
         desk = request.data.get("desk_number")
         if not desk:
-            return Response(
-                {"error": "desk_number required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "desk_number required"}, status=status.HTTP_400_BAD_REQUEST)
 
         employee.desk_number = desk
         employee.save()
 
-        return Response(
-            {
-                "id": employee.id,
-                "full_name": employee.full_name,
-                "desk_number": employee.desk_number,
-            }
-        )
+        return Response({
+            "id": employee.id,
+            "full_name": employee.full_name,
+            "desk_number": employee.desk_number
+        })
+'
+
+printf '%s\n' "$CODE" > api/views.py
+echo "✅ api/views.py успешно перезаписан с правильным импортом @action"

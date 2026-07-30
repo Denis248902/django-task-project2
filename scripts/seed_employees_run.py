@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+
 import django
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
-from emp_app.models import EmployeeProfile, EmployeeImage
+from emp_app.models import EmployeeImage, EmployeeProfile
 
 employees_data = [
     {"full_name": "Борис Петров", "gender": "M", "position": "DevOps Engineer"},

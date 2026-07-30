@@ -1,0 +1,23 @@
+[tool.black]
+line-length = 88
+target-version = ['py314']
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | venv
+  | __pycache__
+  | migrations
+  | tests
+  | test_suite
+)/
+'''
+
+[tool.isort]
+profile = "black"
+skip = ["venv", ".venv", "__pycache__", "migrations", "tests", "test_suite"]
+
+[tool.flake8]
+max-line-length = 88
+exclude = ".git,__pycache__,venv,.venv,migrations,tests,test_suite"
+ignore = "E203,W503"
