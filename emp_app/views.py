@@ -1,54 +1,27 @@
+from django.contrib import admin
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Max
-from django.shortcuts import get_object_or_404, redirect, render
+from .models import EmployeeProfile, Photo
+from .forms import PhotoUploadForm
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-
-from .forms import PhotoUploadForm
-from .models import EmployeeProfile, Photo
-from .permissions import IsViewer, IsEditor, IsAdmin
 from .serializers import EmployeeProfileSerializer
+from .permissions import IsViewer, IsEditor, IsAdmin
 
 
-# --- Обычное Django вью (для браузера: загрузка фото) ---
-def upload_photo(request, pk):
-    employee = get_object_or_404(EmployeeProfile, pk=pk)
-
-    if request.method == "POST":
-        form = PhotoUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            photo = form.save(commit=False)
-            photo.employee = employee
-
-            # Если порядок не указан, ставим следующий доступный
-            if not photo.order:
-                next_order = (
-                    employee.images.aggregate(max_order=Max("order"))["max_order"] or 0
-                )
-                photo.order = next_order + 1
-
-            photo.save()
-            return redirect("employee_detail", pk=employee.pk)
-    else:
-        form = PhotoUploadForm()
-
-    return render(
-        request,
-        "emp_app/upload_photo.html",
-        {
-            "employee": employee,
-            "form": form,
-        },
-    )
-
-
-# --- DRF ViewSet (для API: CRUD сотрудников) ---
 class EmployeeProfileViewSet(viewsets.ModelViewSet):
     queryset = EmployeeProfile.objects.all()
     serializer_class = EmployeeProfileSerializer
 
     def get_permissions(self):
+        # Сначала проверяем, является ли пользователь админом — тогда разрешаем всё
+        if self.request.user.groups.filter(name='admin').exists():
+            return [IsAuthenticated()]
+
         permission_classes = []
+
+        # Обычная логика для не-админов
         if self.action in ['list', 'retrieve']:
             permission_classes = [IsViewer]
         elif self.action in ['create', 'update', 'partial_update']:
