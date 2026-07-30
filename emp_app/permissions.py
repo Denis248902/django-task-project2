@@ -1,16 +1,23 @@
 from rest_framework import permissions
 
-
-class IsAdminOrReadOnly(permissions.BasePermission):
-    """
-    Разрешение только администратору на запись (POST/PUT/PATCH/DELETE).
-    Остальные могут только читать (GET/HEAD/OPTIONS).
-    """
-
+class IsViewer(permissions.BasePermission):
+    """Только просмотр (GET, HEAD, OPTIONS)"""
     def has_permission(self, request, view):
-        # Разрешаем любые запросы, если пользователь — admin
-        if request.user.is_superuser:
+        if request.method in permissions.SAFE_METHODS:
             return True
+        return False
 
-        # Разрешаем только безопасные методы (GET, HEAD, OPTIONS) для остальных
-        return request.method in permissions.SAFE_METHODS
+class IsEditor(permissions.BasePermission):
+    """Просмотр + создание/редактирование (но не удаление)"""
+    def has_permission(self, request, view):
+        allowed_methods = ['GET', 'POST', 'PUT', 'PATCH', 'HEAD', 'OPTIONS']
+        if request.method in allowed_methods:
+            return True
+        if request.method == 'DELETE':
+            return False
+        return False
+
+class IsAdmin(permissions.BasePermission):
+    """Всё разрешено (включая DELETE)"""
+    def has_permission(self, request, view):
+        return True

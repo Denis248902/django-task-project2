@@ -44,7 +44,5 @@ def upload_photo(request, pk):
 
 # --- DRF ViewSet (для API: CRUD сотрудников) ---
 class EmployeeProfileViewSet(viewsets.ModelViewSet):
-    queryset = EmployeeProfile.objects.all().order_by("id")
+    queryset = EmployeeProfile.objects.all()
     serializer_class = EmployeeProfileSerializer
-    authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
