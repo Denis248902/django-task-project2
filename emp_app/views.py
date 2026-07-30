@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .forms import PhotoUploadForm
 from .models import EmployeeProfile, Photo
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsViewer, IsEditor, IsAdmin
 from .serializers import EmployeeProfileSerializer
 
 
@@ -46,3 +46,14 @@ def upload_photo(request, pk):
 class EmployeeProfileViewSet(viewsets.ModelViewSet):
     queryset = EmployeeProfile.objects.all()
     serializer_class = EmployeeProfileSerializer
+
+    def get_permissions(self):
+        permission_classes = []
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [IsViewer]
+        elif self.action in ['create', 'update', 'partial_update']:
+            permission_classes = [IsEditor]
+        elif self.action == 'destroy':
+            permission_classes = [IsAdmin]
+
+        return [permission() for permission in permission_classes]

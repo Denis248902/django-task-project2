@@ -1,23 +1,38 @@
+print("🔐 EMP_APP PERMISSIONS ЗАГРУЖЕН!")
 from rest_framework import permissions
 
 class IsViewer(permissions.BasePermission):
-    """Только просмотр (GET, HEAD, OPTIONS)"""
+    """Только просмотр (GET, HEAD, OPTIONS) + только для группы viewer"""
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return False
+        # Сначала проверяем метод
+        if request.method not in permissions.SAFE_METHODS:
+            return False
+
+        # Потом проверяем группу
+        if not request.user.is_authenticated:
+            return False
+
+        return request.user.groups.filter(name='viewer').exists()
+
 
 class IsEditor(permissions.BasePermission):
-    """Просмотр + создание/редактирование (но не удаление)"""
+    """Создание/редактирование + только для группы editor"""
     def has_permission(self, request, view):
-        allowed_methods = ['GET', 'POST', 'PUT', 'PATCH', 'HEAD', 'OPTIONS']
-        if request.method in allowed_methods:
-            return True
+        # Запрещаем DELETE
         if request.method == 'DELETE':
             return False
-        return False
+
+        if not request.user.is_authenticated:
+            return False
+
+        # Разрешаем всё остальное, только если пользователь в группе editor
+        return request.user.groups.filter(name='editor').exists()
+
 
 class IsAdmin(permissions.BasePermission):
-    """Всё разрешено (включая DELETE)"""
+    """Полный доступ + только для группы admin"""
     def has_permission(self, request, view):
-        return True
+        if not request.user.is_authenticated:
+            return False
+
+        return request.user.groups.filter(name='admin').exists()
