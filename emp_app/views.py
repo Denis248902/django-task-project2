@@ -61,3 +61,11 @@ def employee_upload_photo(request, pk):
         'employee': employee,
         'form': form,
     })
+
+from rest_framework import viewsets
+from .models import EmployeeProfile
+from .serializers import EmployeeProfileSerializer
+
+class EmployeeProfileViewSet(viewsets.ModelViewSet):
+    queryset = EmployeeProfile.objects.all()
+    serializer_class = EmployeeProfileSerializer
